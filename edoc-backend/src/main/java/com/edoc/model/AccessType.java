@@ -1,7 +1,7 @@
 package com.edoc.model;
 
 public enum AccessType {
-    OWNER,
+    ADMIN,
     VIEWER,
     EDITOR,
     COMMENTER

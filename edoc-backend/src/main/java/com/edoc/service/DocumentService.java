@@ -261,4 +261,8 @@ public class DocumentService {
             return Utility.getErrorResponse("Not removed!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public Document getAndVerifyDocument(String documentId, String userId) {
+        return docRepo.findById(documentId).orElse(null);
+    }
 }
