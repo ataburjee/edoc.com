@@ -1,13 +1,18 @@
 package com.edoc.service;
 
+import com.edoc.model.User;
+import com.edoc.repository.UserRepository;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.function.Supplier;
 
 
 public class Utility {
@@ -64,6 +69,28 @@ public class Utility {
 
     public static ResponseEntity<?> generateResponse(JSONObject object) {
         return ResponseEntity.status((HttpStatusCode) object.get(STATUS_CODE)).body(object.get(RESPONSE));
+    }
+
+    public static String getFormattedFileName(String docTitle, String extension) {
+        if (docTitle.isEmpty() || extension.isEmpty()) {
+            throw new RuntimeException("Provide document title/extension...");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        String formattedDate = LocalDateTime.now().format(formatter);
+        if (!Character.isLetterOrDigit(docTitle.charAt(0))) {
+            docTitle = docTitle.substring(1);
+        }
+        if (docTitle.length() > 7) {
+             docTitle = docTitle.substring(0, 7);
+        }
+        if (!Character.isLetterOrDigit(docTitle.charAt(docTitle.length()-1))) {
+            docTitle = docTitle.substring(0, 6);
+        }
+        return docTitle.replaceAll(" ", "_") + formattedDate + extension;
+    }
+
+    public static String getFormattedDateTime(long ct) {
+        return new SimpleDateFormat("dd MMM yyyy, hh:mm a").format(new Date(ct));
     }
 
 }

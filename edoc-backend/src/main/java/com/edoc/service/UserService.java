@@ -92,4 +92,7 @@ public class UserService {
         map.put("token", jwtService.generateToken(username));
         return Utility.getResponse(map, HttpStatus.OK);
     }
+
+
+
 }

@@ -22,13 +22,6 @@ public class DocumentController {
     @Autowired
     private DocumentService documentService;
 
-    private final Map<String, FileGenerator> fileGenerators;
-
-    @Autowired
-    public DocumentController(Map<String, FileGenerator> fileGenerators) {
-        this.fileGenerators = fileGenerators;  // Injected automatically by Spring
-    }
-
     //Create a document
     @PostMapping({"/documents", "/documents/"})
     public ResponseEntity<?> addDocument(@RequestBody Document document) throws Exception {
@@ -77,20 +70,8 @@ public class DocumentController {
 
     @GetMapping("documents/download")
     public ResponseEntity<ByteArrayResource> downloadDocument(@RequestParam String format, @RequestParam String documentId, @RequestParam String userId) throws Exception {
-        FileGenerator fileService = fileGenerators.get(format.toLowerCase());
-
-        if (fileService == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        Document document = documentService.getAndVerifyDocument(documentId, userId);
-
-        ByteArrayResource resource = new ByteArrayResource(fileService.getFileData(document));
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(fileService.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileService.getFileName())
-                .body(resource);
+        System.out.println("documentId = " + documentId + ", userId = " + userId);
+        return documentService.downloadDocument(format, documentId, userId);
     }
 
 }
