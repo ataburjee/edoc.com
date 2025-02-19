@@ -13,6 +13,7 @@ export default function Home() {
   const [title, setTitle] = useState("No Document Selected!");
   // const [userName, setUserName] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
   useEffect(() => {
     const storedUserDetails = localStorage.getItem("userDetails");
@@ -157,6 +158,38 @@ export default function Home() {
     window.location.reload();
   };
 
+  const handleDownload = async (format) => {
+    if (!selectedDocument) {
+      alert("Please select a document first");
+      return;
+    }
+    try {
+      console.log("download will start..." + format)
+      const response = await fetch(`http://localhost:8080/documents/download?format=${format}&documentId=${selectedDocument.id}&userId=${userId}`, {
+        method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+      });
+
+      if (!response.ok) {
+        getErrorMessage("Download failed!");
+      }
+
+      const blob = await response.blob(); // Convert response to a Blob
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `document.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download failed:", error);
+      getErrorMessage(error.message);
+    }
+  }
+
   return (
     <>
       <ToastContainer />
@@ -188,8 +221,30 @@ export default function Home() {
                   disabled={!selectedDocument}
                 />
               </div>
-              <div>
+              <div style={{ position: "relative", display: "inline-block" }}>
                 <button
+                  type="button"
+                  className="btn-area"
+                  onMouseEnter={() => setShowDownloadOptions(true)}
+                  onMouseLeave={() => setShowDownloadOptions(false)}
+                >
+                  DOWNLOAD ▼
+                </button>
+                {showDownloadOptions && (
+                  <div
+                    className="download-options"
+                    onMouseEnter={() => setShowDownloadOptions(true)}
+                    onMouseLeave={() => setShowDownloadOptions(false)}
+                  >
+                    <ul>
+                      <li onClick={() => handleDownload("pdf")}>Download as PDF</li>
+                      <li onClick={() => handleDownload("doc")}>Download as Doc</li>
+                      <li onClick={() => handleDownload("text")}>Download as Text</li>
+                    </ul>
+                  </div>
+                )}
+                <button
+                style={{ margin: "0 10px" }}
                   type="button"
                   className="btn-area"
                   onClick={shareDocument}
@@ -197,7 +252,6 @@ export default function Home() {
                   SHARE
                 </button>
                 <button
-                  style={{ marginLeft: "10px" }}
                   type="button"
                   className="btn-area"
                   onClick={handleCreateNewButton}
