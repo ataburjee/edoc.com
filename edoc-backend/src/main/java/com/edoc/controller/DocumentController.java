@@ -4,11 +4,16 @@ import com.edoc.model.Document;
 import com.edoc.model.RemoveAccess;
 import com.edoc.model.ShareDocument;
 import com.edoc.service.DocumentService;
+import com.edoc.service.export.FileGenerator;
 import com.edoc.service.Utility;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -61,6 +66,12 @@ public class DocumentController {
     @PatchMapping("/documents/{documentId}")
     public ResponseEntity<?> removeDocumentAccess(@PathVariable String documentId, @RequestBody RemoveAccess accessorDetails) throws Exception {
         return Utility.generateResponse(documentService.removeDocumentAccessType(documentId, accessorDetails));
+    }
+
+    @GetMapping("documents/download")
+    public ResponseEntity<ByteArrayResource> downloadDocument(@RequestParam String format, @RequestParam String documentId, @RequestParam String userId) throws Exception {
+        System.out.println("documentId = " + documentId + ", userId = " + userId);
+        return documentService.downloadDocument(format, documentId, userId);
     }
 
 }

@@ -1,29 +1,21 @@
 import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Login.css";
 import { Link } from "react-router-dom";
 
-export default function Login() {
-  let [isChecked, setIsChecked] = useState(false);
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
+const Login = () => {
+
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
 
   let handleLogin = () => {
-    console.log("clicked...");
-    console.log("isChecked=", isChecked);
-    console.log("email=", email);
-    console.log("password=", password);
-
-    let userData = JSON.stringify({
-      username: email,
-      password: password,
-    });
 
     fetch("http://localhost:8080/api/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: userData,
+      body: JSON.stringify({ username, password }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -38,98 +30,40 @@ export default function Login() {
   };
 
   return (
-    <div id="main_container">
-      <section className="text-center text-lg-start">
-        <div className="card mb-3">
-          <div className="row g-0 d-flex align-items-center">
-            <div className="col-lg-4 d-none d-lg-flex">
-              <img
-                src="https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg"
-                alt="Trendy Pants and Shoes"
-                className="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5"
-              />
-            </div>
-            <div className="col-lg-8">
-              <div className="card-body py-5 px-md-5">
-                <form>
-                  {/* <!-- Email input --> */}
-                  <div data-mdb-input-init className="form-outline mb-4">
-                    <input
-                      type="email"
-                      id="form2Example1"
-                      className="form-control"
-                      placeholder="eg: john.doe@gmail.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <label className="form-label" htmlFor="form2Example1">
-                      Username
-                    </label>
-                  </div>
-
-                  {/* <!-- Password input --> */}
-                  <div data-mdb-input-init className="form-outline mb-4">
-                    <input
-                      type="password"
-                      id="form2Example2"
-                      className="form-control"
-                      placeholder="********"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <label className="form-label" htmlFor="form2Example2">
-                      Password
-                    </label>
-                  </div>
-
-                  {/* <!-- 2 column grid layout htmlFor inline styling --> */}
-                  <div className="row mb-4">
-                    <div className="col d-flex justify-content-center">
-                      {/* <!-- Checkbox --> */}
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="form2Example31"
-                          checked={isChecked}
-                          onChange={(e) => setIsChecked(e.target.checked)}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="form2Example31"
-                        >
-                          {" "}
-                          Remember me{" "}
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="col">
-                      <a href="#!">Forgot password?</a>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleLogin}
-                    type="button"
-                    data-mdb-button-init
-                    data-mdb-ripple-init
-                    className="btn btn-primary btn-block mb-4 w-100"
-                  >
-                    Sign in
-                  </button>
-                  <p>
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="link-info">
-                      Register
-                    </Link>
-                  </p>
-                </form>
-              </div>
+    <div className="login-container d-flex justify-content-center align-items-center vh-100">
+      <div className="login-box p-4">
+        <h2 className="text-white text-center mb-4">Login</h2>
+        <form>
+          <div className="mb-3">
+            <label className="form-label text-white">Username</label>
+            <div className="input-group">
+              <span className="input-group-text"><i className="bi bi-person"></i></span>
+              <input type="email" className="form-control" placeholder="Username" value={username} onChange={(e) => setUserName(e.target.value)}/>
             </div>
           </div>
-        </div>
-      </section>
+          <div className="mb-3">
+            <label className="form-label text-white">Password</label>
+            <div className="input-group">
+              <span className="input-group-text"><i className="bi bi-lock"></i></span>
+              <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+            </div>
+          </div>
+          <div className="mb-3 form-check">
+            <input type="checkbox" className="form-check-input" id="rememberMe" />
+            <label className="form-check-label text-white" htmlFor="rememberMe">Remember me</label>
+          </div>
+          <button type="submit" className="btn btn-light w-100" onClick={handleLogin}>LOGIN</button>
+          <p className="text-center mt-2 text-white">
+            <a href="#!" className="text-white">Forgot your password?</a>
+          </p>
+          <p className="text-center mt-2 text-white">
+          Don't have an account?&nbsp;
+            <Link to="/signup" className="text-white">Signup Here</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
-}
+};
+
+export default Login;

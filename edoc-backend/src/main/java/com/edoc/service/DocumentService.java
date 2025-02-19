@@ -3,10 +3,15 @@ package com.edoc.service;
 import com.edoc.model.*;
 import com.edoc.repository.DocumentRepository;
 import com.edoc.repository.UserRepository;
+import com.edoc.service.export.FileGenerator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,6 +26,13 @@ public class DocumentService {
 
     @Autowired
     private UserRepository userRepo;
+
+    private final Map<String, FileGenerator> fileGenerators;
+
+    @Autowired
+    public DocumentService(Map<String, FileGenerator> fileGenerators) {
+        this.fileGenerators = fileGenerators;  // Injected automatically by Spring
+    }
 
     public JSONObject createDocument(Document document) throws Exception {
 
@@ -260,5 +272,30 @@ public class DocumentService {
         } else {
             return Utility.getErrorResponse("Not removed!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Document getAndVerifyDocument(String documentId, String userId) {
+        Optional<Document> optionalDocument = docRepo.findById(documentId);
+        if (optionalDocument.isEmpty()) {
+            Utility.NO_DATA_AVAILABLE();
+        }
+        Document document = optionalDocument.get();
+        if (!document.getUserId().equals(userId)) {
+            Utility.getErrorResponse("User not authorized", HttpStatus.UNAUTHORIZED);
+        }
+        return document;
+    }
+
+    public ResponseEntity<ByteArrayResource> downloadDocument(String format, String documentId, String userId) throws Exception {
+        FileGenerator fileService = fileGenerators.get(format.toLowerCase());
+        if (fileService == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        Document document = getAndVerifyDocument(documentId, userId);
+        ByteArrayResource resource = new ByteArrayResource(fileService.getFileData(document));
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(fileService.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileService.getFileName())
+                .body(resource);
     }
 }

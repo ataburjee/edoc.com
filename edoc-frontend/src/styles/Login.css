@@ -1,4 +1,4 @@
-.rounded-t-5 {
+/* .rounded-t-5 {
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
@@ -26,4 +26,43 @@
   p {
     text-align: center;
   }
+} */
+
+
+.login-container {
+  background: linear-gradient(to right, #2e8b57, #4b0082);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 20px;
+  width: 350px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-group-text {
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+.form-control {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-light {
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
 }

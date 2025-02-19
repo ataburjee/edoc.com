@@ -20,40 +20,6 @@ body {
     height: calc(100vh - 70px);
   }
   
-  /* Sidebar */
-  /* .sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px;
-    /* overflow-y: auto;
-  }
-  
-  .sidebar h3 {
-    text-align: center;
-    border-bottom: 2px solid white;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    padding: 10px;
-    background: #34495e;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .sidebar li:hover {
-    background: #1abc9c;
-  } */
-  
   .sidebar {
     width: 250px;
     background-color: #2c3e50;
@@ -141,7 +107,7 @@ body {
   }
   
   .btn-area {
-    background-color: #507091;
+    background-color: #567797;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -309,9 +275,38 @@ body {
   }
 }
 
-
 .modal-content > form > label {
   display: flex;
   justify-items: left;
   font-size: small;
+}
+
+.download-options {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 5px 0;
+  z-index: 10;
+  min-width: 150px;
+}
+
+.download-options ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.download-options li {
+  padding: 8px 15px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.download-options li:hover {
+  background: #ccc7c7;
 }
