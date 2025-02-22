@@ -11,9 +11,10 @@ export default function Home() {
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [title, setTitle] = useState("No Document Selected!");
-  // const [userName, setUserName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
 
   useEffect(() => {
     const storedUserDetails = localStorage.getItem("userDetails");
@@ -22,7 +23,6 @@ export default function Home() {
     }
     const parsedUserDetails = JSON.parse(storedUserDetails);
     console.log("token from storage:", parsedUserDetails.token);
-    // setUserName(parsedUserDetails.user.name || "Unknown User");
     setToken(parsedUserDetails.token || "");
   }, []);
 
@@ -50,7 +50,7 @@ export default function Home() {
     };
 
     fetchDocuments();
-  }, [token, userId]); // Runs when token is set
+  }, [token, userId]);
 
 
   const handleDocumentClick = (document) => {
@@ -62,7 +62,7 @@ export default function Home() {
   const getErrorMessage = (error) => {
     toast.error(error, {
       position: "bottom-right",
-      autoClose: 2000, // 1 second
+      autoClose: 2000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: false,
@@ -74,7 +74,7 @@ export default function Home() {
   const getSuccessMessage = (message) => {
     toast.success(message, {
       position: "bottom-right",
-      autoClose: 2000, // 1 second
+      autoClose: 2000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: false,
@@ -104,7 +104,6 @@ export default function Home() {
 
       if (!response.ok) throw new Error("Failed to save document");
       const data = await response.json();
-      // alert(data.message);
       getSuccessMessage(data.message);
       setTimeout(() => {
         window.location.reload();
@@ -128,7 +127,10 @@ export default function Home() {
     }
   };
 
-  const shareDocument = async () => { };
+  const shareDocument = async () => { 
+    setShowShareModal(true);
+    console.log("share document clicked");
+  };
 
   const handleCreateNewButton = async () => {
     setShowModal(true);
@@ -177,7 +179,7 @@ export default function Home() {
         getErrorMessage("Download failed!");
       }
 
-      const blob = await response.blob(); // Convert response to a Blob
+      const blob = await response.blob();
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
       link.download = `document.${format}`;
@@ -190,6 +192,38 @@ export default function Home() {
     }
   }
 
+  const handleShareDocument = async () => {
+    if (!selectedDocument) {
+      alert("Please select a document first");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:8080/documents/share", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          documentId: selectedDocument.id,
+          owner: userId,
+          recipientEmail,
+          accessType: ["COMMENTOR"],
+        }),
+      });
+
+      if (!response.ok) {
+        getErrorMessage("Sharing failed!");
+      }
+
+      const data = await response.json();
+      getSuccessMessage(data.message);
+    } catch (error) {
+      console.error("Sharing failed:", error);
+      getErrorMessage(error.message);
+    }
+  }
+
   return (
     <>
       <ToastContainer />
@@ -198,7 +232,6 @@ export default function Home() {
           <aside className="sidebar">
             <h3>Documents</h3>
             <ul>
-              {/* {console.log("documents: " + documents[0][0])} */}
               {documents.length > 0 && documents[0].length > 0 ? (
                 documents[0].map((doc, index) => (
                   <li key={index} onClick={() => handleDocumentClick(doc)}>
@@ -294,6 +327,26 @@ export default function Home() {
               <div className="modal-buttons">
                 <button type="submit" className="btn create-btn">Create</button>
                 <button type="button" className="btn cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {showShareModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Share Document</h2>
+            <form onSubmit={handleShareDocument}>
+              <label>Enter email:</label>
+              <input
+                type="email"
+                placeholder="Enter Recipient email..."
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                required
+              />
+              <div className="modal-buttons">
+                <button type="submit" className="btn create-btn">Share</button>
+                <button type="button" className="btn cancel-btn" onClick={() => setShowShareModal(false)}>Cancel</button>
               </div>
             </form>
           </div>
