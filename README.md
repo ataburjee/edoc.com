@@ -39,20 +39,6 @@
 
 ---
 
-## 📂 Project Structure
-
-src/main/java/com/edoc/
-│
-├── controller # REST API controllers
-├── model # Entity classes (User, Document, etc.)
-├── repository # JPA repositories
-├── service # Business logic and services
-├── security # JWT token handling and filters
-└── utils # Utility classes (Date, JWT, etc.)
-
-
----
-
 ## 🔐 Authentication Flow
 
 - **Login**:  
@@ -118,7 +104,18 @@ Atabur Rahaman Mollah (Rehman)
 Full Stack Developer | Java | Spring Boot | React | REST APIs
 LinkedIn | Portfolio
 
+---
 
+## 📂 Project Structure
+
+src/main/java/com/edoc/
+│
+├── controller # REST API controllers
+├── model # Entity classes (User, Document, etc.)
+├── repository # JPA repositories
+├── service # Business logic and services
+├── security # JWT token handling and filters
+└── utils # Utility classes (Date, JWT, etc.)
 
 ---
 
